@@ -15,38 +15,42 @@ app.use(express.json());
 // pherofinal
 // cWP7R8EYWNwndrQ0
 
+app.get('/', (request, response) => {
+    response.send('nothing')
+});
+
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.BD_PASS}@cluster0.mmeqena.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-
-
 async function run() {
 
-    const category = client.db("pherofinal").collection("catagory");
     try {
-        app.get('/a', async (req, res) => {
-            console.log(uri)
-            res.send(uri);
-        })
-        // get category 
-        app.get('/category', async (req, res) => {
+
+        const collection = client.db("doctorsportal").collection("services");
+        const BookingCollection = client.db("booking").collection("client");
+
+        // get appointments 
+        app.get('/appointmentdata', async (req, res) => {
             const query = {};
-            const productList = await category.find(query).toArray();
-            res.send(productList);
+            const appointments = await collection.find(query).toArray();
+            res.send(appointments);
         })
 
+        // add appointment 
+        app.post('/booking', async (req, res) => {
+            const appointment = req.body
+            console.log(appointment)
+            const result = await BookingCollection.insertOne(appointment)
+            res.send(result)
+
+        })
     }
     finally { err => console.error(err); }
 }
 run().catch(console.dir);
 
 
-
-
-app.get('/', (request, response) => {
-    response.send('AAJAMN SAMI')
-});
 
 app.listen(port, () => {
     console.log('doctors portal is running on ', port)

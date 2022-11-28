@@ -24,6 +24,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
 
     const category = client.db("pherofinal").collection("catagory");
+    const products = client.db("pherofinal").collection("Products");
     try {
         app.get('/a', async (req, res) => {
             console.log(uri)
@@ -35,7 +36,38 @@ async function run() {
             const productList = await category.find(query).toArray();
             res.send(productList);
         })
-
+        app.get('/category/:id', async (req, res) => {
+            // console.log(req.params);
+            const category = req.params['id']
+            const query = { type: category };
+            const productList = await products.find(query).toArray();
+            console.log(productList)
+            res.send(productList);
+        })
+        app.post('/product/:id', async (req, res) => {
+            // console.log(req.params);
+            const category = req.params['id']
+            const filter = { _id: category };
+            // this option instructs the method to create a document if no documents match the filter
+            const options = { upsert: true };
+            // create a document that sets the plot of the movie
+            const updateDoc = {
+                $set: {
+                    IsSold: true
+                },
+            };
+            const result = await movies.updateOne(filter, updateDoc, options);
+            console.log(
+                result
+            );
+            res.send(result)
+        })
+        app.get('/product/data', async (req, res) => {
+            const productData = req.body;
+            console.log(productData);
+            const result = await products.insertOne(productData);
+            res.send('Success');
+        });
     }
     finally { err => console.error(err); }
 }

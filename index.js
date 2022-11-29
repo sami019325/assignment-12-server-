@@ -56,17 +56,17 @@ async function run() {
                     IsSold: true
                 },
             };
-            const result = await movies.updateOne(filter, updateDoc, options);
+            const result = await products.updateOne(filter, updateDoc, options);
             console.log(
                 result
             );
             res.send(result)
         })
-        app.get('/product/data', async (req, res) => {
+        app.post('/add', async (req, res) => {
             const productData = req.body;
             console.log(productData);
             const result = await products.insertOne(productData);
-            res.send('Success');
+            res.send(result);
         });
     }
     finally { err => console.error(err); }

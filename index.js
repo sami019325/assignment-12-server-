@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const port = process.env.PORT || 5000
 const app = express();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 // const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
@@ -44,7 +44,7 @@ async function run() {
             console.log(productList)
             res.send(productList);
         })
-        app.get('/category/addvetise', async (req, res) => {
+        app.get('/advertise', async (req, res) => {
             // console.log(req.params);
             const query = { IsAdvertised: true };
             const productList = await products.find(query).toArray();
@@ -54,16 +54,16 @@ async function run() {
         app.post('/product/:id', async (req, res) => {
             // console.log(req.params);
             const category = req.params['id']
-            const filter = { _id: category };
+            const filter = { _id: ObjectId(category) };
             // this option instructs the method to create a document if no documents match the filter
-            const options = { upsert: true };
-            // create a document that sets the plot of the movie
-            const updateDoc = {
-                $set: {
-                    IsSold: true
-                },
-            };
-            const result = await products.updateOne(filter, updateDoc, options);
+            // const options = { upsert: true };
+            // // create a document that sets the plot of the movie
+            // const updateDoc = {
+            //     $set: {
+            //         IsSold: true
+            //     },
+            // };
+            const result = await products.updateOne(filter);
             console.log(
                 result
             );
@@ -75,6 +75,18 @@ async function run() {
             const result = await products.insertOne(productData);
             res.send(result);
         });
+        // app.delete('/delete/:id', async (req, res) => {
+        //     const category = req.params.id
+        //     const filter = { _id: ObjectId(category) };
+        //     const result = await products.deleteOne(filter)
+        //     res.send(result)
+        // })
+        app.get('/delete/:id', async (req, res) => {
+            const category = req.params.id
+            const filter = { _id: ObjectId(category) };
+            const result = await products.deleteOne(filter)
+            res.send('result')
+        })
 
     }
     finally { err => console.error(err); }

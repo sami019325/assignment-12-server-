@@ -44,6 +44,13 @@ async function run() {
             console.log(productList)
             res.send(productList);
         })
+        app.get('/category/addvetise', async (req, res) => {
+            // console.log(req.params);
+            const query = { IsAdvertised: true };
+            const productList = await products.find(query).toArray();
+            console.log(productList)
+            res.send(productList);
+        })
         app.post('/product/:id', async (req, res) => {
             // console.log(req.params);
             const category = req.params['id']
@@ -68,6 +75,7 @@ async function run() {
             const result = await products.insertOne(productData);
             res.send(result);
         });
+
     }
     finally { err => console.error(err); }
 }
